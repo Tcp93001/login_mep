@@ -17,21 +17,21 @@
       </v-toolbar-items>
     </v-toolbar>
     <v-content>
-
+      <Login />
       <UserTable />
     </v-content>
   </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld'
 import UserTable from './components/UserTable'
+import Login from './components/Login'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld,
-    UserTable
+    UserTable,
+    Login
   },
   data () {
     return {
