@@ -1,6 +1,8 @@
 <template>
   <v-app dark>
-    <v-container align-content-center class="background">
+    <v-container
+      align-content-center class="background"
+    >
       <v-toolbar fixed clipped-left class="red darken-4" app>
         <v-toolbar-title class="headline">
           <span>Ingenieria MEP</span>
@@ -18,68 +20,67 @@
         </v-toolbar-items>
       </v-toolbar>
       <v-content>
-        <div class="centered-align">
+        <div v-if="!success" class="centered-align">
+          <div>
+            <v-container>
+              <v-alert
+                :value="badInput"
+                dismissible
+                type="warning"
+                transition="scale-transition"
+              >
+                Verifique su usuario y contraseña
+              </v-alert>
+              <v-form>
+                <v-container>
+                  <v-layout>
+                    <v-flex
+                      xs12
+                      md3
+                      offset-md3
+                    >
+                      <v-text-field
+                        v-model="user"
+                        label="Usuario"
+                        required
+                      ></v-text-field>
+                    </v-flex>
 
-<div>
-      <v-container>
-    <v-alert
-      :value="badInput"
-      dismissible
-      type="warning"
-      transition="scale-transition"
-    >
-      Verifique su usuario y contraseña
-    </v-alert>
-    <v-form>
-      <v-container>
-        <v-layout>
-          <v-flex
-            xs12
-            md3
-            offset-md3
-          >
-            <v-text-field
-              v-model="user"
-              label="Usuario"
-              required
-            ></v-text-field>
-          </v-flex>
+                    <v-flex
+                      xs12
+                      md3
+                    >
+                      <v-text-field
+                        v-model="password"
+                        label="Password"
+                        required
+                        type="password"
+                      ></v-text-field>
+                    </v-flex>
+                  </v-layout>
+                </v-container>
+              </v-form>
 
-          <v-flex
-            xs12
-            md3
-          >
-            <v-text-field
-              v-model="password"
-              label="Password"
-              required
-              type="password"
-            ></v-text-field>
-          </v-flex>
-        </v-layout>
-      </v-container>
-    </v-form>
-
-    <div class="text-xs-center">
-      <v-btn
-        type="submit"
-        :loading="loading"
-        :disabled="loading"
-        color="secondary"
-        @click="handleSubmit"
-      >
-        Entrar
-      </v-btn>
-    </div>
-      </v-container>
-  </div>
-
+              <div class="text-xs-center">
+                <v-btn
+                  type="submit"
+                  :loading="loading"
+                  :disabled="loading"
+                  color="secondary"
+                  @click="handleSubmit"
+                >
+                  Entrar
+                </v-btn>
+              </div>
+            </v-container>
+          </div>
         </div>
-        <div class="centered-align" v-if="true">
-            <UserTable :userData="adminData" />
+        <div class="centered-align" v-if="adminUser">
+          <AddUser />
+          <UserTable :userData="adminData" />
         </div>
-        <div class="centered-align" v-if="true">
-            <UserTable />
+        <div class="centered-align" v-if="!adminUser && success">
+          <CardUser />
         </div>
       </v-content>
     </v-container>
@@ -91,7 +92,7 @@ import axios from 'axios'
 import { setTimeout } from 'timers'
 
 import UserTable from './components/UserTable.vue'
-// import Login from './components/Login/Login.vue'
+import CardUser from './components/CardUser/CardUser.vue'
 
 const url = 'https://ingeniaria-mep.herokuapp.com/user/login'
 const urlShow = 'https://ingeniaria-mep.herokuapp.com/user'
@@ -101,7 +102,8 @@ const urlShow = 'https://ingeniaria-mep.herokuapp.com/user'
 export default {
   name: 'App',
   components: {
-    UserTable
+    UserTable,
+    CardUser
   },
   data () {
     return {
@@ -118,27 +120,7 @@ export default {
       loading2: false,
       loading3: false,
       loading4: false,
-      userId: '',
-      jsonData: [{
-        "links":[],
-        "admin":true,
-        "_id":"5cb3e925ca588e349f055db8",
-        "username":"usuarioAdmin",
-        "password":"$2b$10$L7CqLHr1dfG5MnHOaeFvc.fIak1v./Lpz0tXX.xysxR3rPMJ7zyOm",
-        "__v":0
-      },{"links":["https://onedrive.live.com/?id=1DAE05C90EE8DFCB%21106&cid=1DAE05C90EE8DFCB"],
-        "admin":true,
-        "_id":"5cb3ece9e6d56a00178a606a",
-        "username":"pruebas2",
-        "password":"$2b$10$omukNRwXmiQ0N2cijXM2p.4dwTLo6FFwRbDbop6..bhkvfHDFdtWS",
-        "__v":0
-        },{"links":["https://onedrive.live.com/?id=1DAE05C90EE8DFCB%21106&cid=1DAE05C90EE8DFCB"],
-        "admin":true,
-        "_id":"5cb3ecfde6d56a00178a606b",
-        "username":"pruebas3",
-        "password":"$2b$10$2knyeRo1ltIYAiYCQyFoQeSPKYHBLD2O7vZEr6tBWAUkWa.eDFISO",
-        "__v":0
-      }]
+      userId: ''
     }
   },
   watch: {
@@ -176,6 +158,9 @@ export default {
           this.token = this.userData.token
           if (this.userData.user.admin) {
             this.adminUser = true
+            this.success = true
+//  poner aqui un cambio de estilo para que se presente otro fondo en el backgrpund, dependiendo si es administrador o 
+// un usuario normal
             this.getAdminData()
           }
         })
@@ -264,6 +249,7 @@ export default {
 
   .background {
     height: 600px;
+    overflow: hidden;
     background-image: linear-gradient(rgba(0,0,0, 0.80)), url("../src/assets/WhatsApp Image 2019-02-12 at 10.15.02 AM.jpeg");
   }
 </style>
