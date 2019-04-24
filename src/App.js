@@ -1,27 +1,38 @@
 import axios from 'axios'
 import { setTimeout } from 'timers'
 
+import UserTable from './components/UserTable/UserTable.vue'
+import CardUser from './components/CardUser/CardUser.vue'
+import CreateUser from './components/CreateUser/CreateUser.vue'
+
 const url = 'https://ingeniaria-mep.herokuapp.com/user/login'
 const urlShow = 'https://ingeniaria-mep.herokuapp.com/user'
 
 export default {
-  name: 'Login',
+  name: 'App',
+  components: {
+    CardUser,
+    CreateUser,
+    UserTable
+  },
   data () {
     return {
       success: false,
       badInput: false,
+      error: false,
       user: '',
       password: '',
-      userData: {},
+      userData: [],
       adminUser: null,
-      adminData: {},
+      adminData: [],
       token: '',
       loader: null,
       loading: false,
       loading2: false,
       loading3: false,
       loading4: false,
-      userId: ''
+      userId: '',
+      message: 'Verifique su usuario y contraseña'
     }
   },
   watch: {
@@ -29,7 +40,7 @@ export default {
       const l = this.loader
       this[l] = !this[l]
 
-      setTimeout(() => (this[l] = false), 6000)
+      setTimeout(() => (this[l] = false), 8000)
 
       this.loader = null
     }
@@ -38,35 +49,34 @@ export default {
 
     async handleSubmit () {
       this.loader = 'loading'
-      const params = {
-        user: this.user,
-        password: this.password
-      }
       // admin real: usuarioAdmin  password: *secret00*
       await axios({
         method: 'post',
         url,
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
-          'username': 'usuarioAdmin',
-          'password': '*secret00*'
-          // 'username': this.user,
-          // 'password': this.password
+          // 'username': 'usuarioAdmin',
+          // 'password': '*secret00*'
+          'username': this.user,
+          'password': this.password
         }
       })
         .then(response => {
           this.userData = response.data.data
           this.token = this.userData.token
-          if (this.userData.user.admin) {
+          this.success = true
+          if (!this.userData.user.admin) {
+            this.adminUser = false
+          } else {
             this.adminUser = true
             this.getAdminData()
           }
         })
         .catch(response => {
-          this.badInput = true
+          this.error = true
           setTimeout(() => {
-            this.badInput = false
-          }, 3000);
+            this.error = false
+          }, 6000)
         })
     },
 
@@ -82,19 +92,21 @@ export default {
       })
         .then(response => {
           this.adminData = response.data.data
-          console.log('aqui', this.adminData)
           this.$emit('adminReceivedData', this.adminData)
         })
         .catch(response => {
-          console.log(response)
+          this.error = true
+          setTimeout(() => {
+            this.error = false
+          }, 6000)
         })
     },
-    async createUser () {
-      // usuarios de prueba2 a prueba4 ver con getAdminData
+
+    async createUser (newUser) {
       const body = {
-        'username': 'pruebas8',
-        'password': 'TETETE',
-        'links': ['https://onedrive.live.com/?id=1DAE05C90EE8DFCB%21106&cid=1DAE05C90EE8DFCB'],
+        'username': newUser.name,
+        'password': newUser.password,
+        'links': [newUser.links],
         'admin': false
       }
       await axios({
@@ -109,16 +121,22 @@ export default {
       })
         .then(response => {
           this.adminData = response.data.data
+          this.getAdminData()
         })
         .catch(response => {
-          console.log(response)
+          this.error = true
+          setTimeout(() => {
+            this.error = false
+            this.message = 'Verifique su usuario y contraseña'
+          }, 6000)
         })
     },
 
-    async deleteUser () {
+    async deletingUser (userDeleted) {
+
       await axios({
         method: 'delete',
-        url: urlShow + '/' + userId,
+        url: urlShow + '/' + userDeleted.id,
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
           'x-token': this.token,
@@ -127,9 +145,21 @@ export default {
       })
         .then(response => {
           this.adminData = response.data.data
+          this.getAdminData()
         })
         .catch(response => {
-  
+          if (response.data.status === 400) {
+            this.error = true
+            this.message = 'Tenemos problemas con el servidor por el momento. Intente nuevamente más tarde.'
+            setTimeout(() => {
+              this.error = false
+              this.message = 'Verifique su usuario y contraseña'
+            }, 6000)
+          }
+          this.error = true
+          setTimeout(() => {
+            this.error = false
+          }, 6000)
         })
     }
   }

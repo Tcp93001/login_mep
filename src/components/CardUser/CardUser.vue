@@ -1,7 +1,7 @@
 <template>
   <v-layout>
     <v-flex xs12 sm6 offset-sm3>
-      <v-card ripple="true">
+      <v-card>
         <v-img
           src="https://res.cloudinary.com/tcp93001/image/upload/v1555551086/ingenieriamep34.jpg"
           height="200"
@@ -26,7 +26,9 @@
           </v-layout>
 
         <v-card-actions>
-          <v-btn flat color="orange">Ir a la documentación</v-btn>
+          <v-btn flat color="orange" @click="goToInfo">
+            Ir a la documentación
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-flex>
