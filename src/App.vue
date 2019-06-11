@@ -5,7 +5,7 @@
     >
       <v-toolbar fixed clipped-left class="red darken-4" app>
         <v-toolbar-title class="headline">
-          <span>Ingenieria MEP</span>
+          <span>Ingeniería MEP</span>
           <span class="pl-5 ml-5 display-2">Proyectos</span>
         </v-toolbar-title>
         <v-spacer></v-spacer>

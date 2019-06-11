@@ -32,7 +32,8 @@ export default {
       loading3: false,
       loading4: false,
       userId: '',
-      message: 'Verifique su usuario y contraseña'
+      message: 'Verifique su usuario y contraseña',
+      answer: ''
     }
   },
   watch: {
@@ -73,6 +74,7 @@ export default {
           }
         })
         .catch(response => {
+          this.answer = response
           this.error = true
           setTimeout(() => {
             this.error = false
@@ -95,6 +97,7 @@ export default {
           this.$emit('adminReceivedData', this.adminData)
         })
         .catch(response => {
+          this.answer = response
           this.error = true
           setTimeout(() => {
             this.error = false
@@ -124,6 +127,7 @@ export default {
           this.getAdminData()
         })
         .catch(response => {
+          this.answer = response
           this.error = true
           setTimeout(() => {
             this.error = false
@@ -148,7 +152,7 @@ export default {
           this.getAdminData()
         })
         .catch(response => {
-          if (response.data.status === 400) {
+          if (response.data.data.status === 400) {
             this.error = true
             this.message = 'Tenemos problemas con el servidor por el momento. Intente nuevamente más tarde.'
             setTimeout(() => {
