@@ -9,8 +9,8 @@
     >
       Verifique su usuario y contraseña
     </v-alert>
-    <v-container>
-      <v-form>
+    <v-form>
+      <v-container>
         <v-layout>
           <v-flex
             xs12
@@ -35,8 +35,8 @@
             ></v-text-field>
           </v-flex>
         </v-layout>
+      </v-container>
     </v-form>
-    </v-container>
 
     <div class="text-xs-center">
       <v-btn

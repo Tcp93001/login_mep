@@ -1,9 +1,11 @@
 <template>
   <v-app dark>
-    <v-container align-content-center class="background">
+    <v-container
+      align-content-center class="background"
+    >
       <v-toolbar fixed clipped-left class="red darken-4" app>
         <v-toolbar-title class="headline">
-          <span>Ingenieria MEP</span>
+          <span>Ingeniería MEP</span>
           <span class="pl-5 ml-5 display-2">Proyectos</span>
         </v-toolbar-title>
         <v-spacer></v-spacer>
@@ -18,42 +20,82 @@
         </v-toolbar-items>
       </v-toolbar>
       <v-content>
-        <div class="centered-align">
-          <Login />
+        <div v-if="!success" class="centered-align">
+          <div>
+            <v-container>
+              <v-alert
+                :value="badInput"
+                dismissible
+                type="warning"
+                transition="scale-transition"
+              >
+                {{ message }}
+              </v-alert>
+              <v-form v-if="!success">
+                <v-container>
+                  <v-layout>
+                    <v-flex
+                      xs12
+                      md3
+                      offset-md3
+                    >
+                      <v-text-field
+                        v-model="user"
+                        label="Usuario"
+                        required
+                      ></v-text-field>
+                    </v-flex>
+
+                    <v-flex
+                      xs12
+                      md3
+                    >
+                      <v-text-field
+                        v-model="password"
+                        label="Password"
+                        required
+                        type="password"
+                      ></v-text-field>
+                    </v-flex>
+                  </v-layout>
+                </v-container>
+              </v-form>
+
+              <div class="text-xs-center">
+                <v-btn
+                  type="submit"
+                  :loading="loading"
+                  :disabled="loading"
+                  color="secondary"
+                  @click="handleSubmit"
+                >
+                  Entrar
+                </v-btn>
+              </div>
+            </v-container>
+          </div>
         </div>
-        <div class="centered-align" v-if="true">
-            <UserTable />
+        <div class="centered-align" v-if="adminUser">
+          <CreateUser
+            @setNewUser="createUser"
+          />
+          <UserTable
+            :error="error"
+            :userData="adminData"
+            @deleteUser="deletingUser"
+          />
         </div>
-        <div class="centered-align" v-if="true">
-            <UserTable />
+        <div class="centered-align" v-if="!adminUser && success">
+          <CardUser
+            :userData="userData"
+          />
         </div>
       </v-content>
     </v-container>
   </v-app>
 </template>
 
-<script>
-import UserTable from './components/UserTable.vue'
-import Login from './components/Login/Login.vue'
-
-// aqui voy a necesitar las banderas para saber qué tabla pintar y si ya está loggeado o no
-
-export default {
-  name: 'App',
-  components: {
-    UserTable,
-    Login
-  },
-  data () {
-    return {
-      userData: {},
-      adminData: '',
-      isUserAdmin: false
-    }
-  }
-
-}
-</script>
+<script src="./App.js" />
 
 <style>
   .centered-align {
@@ -64,7 +106,9 @@ export default {
   }
 
   .background {
-    background-color: rgb(41, 41, 41);
+    min-height: 700px;
+    background-image: linear-gradient(rgba(0,0,0, 0.80)), url("../src/assets/WhatsApp Image 2019-02-12 at 10.15.02 AM.jpeg");
+    background-size: cover;
   }
 </style>
 
