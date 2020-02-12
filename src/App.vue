@@ -107,8 +107,13 @@
 
   .background {
     min-height: 700px;
-    background-image: linear-gradient(rgba(0,0,0, 0.80)), url("../src/assets/WhatsApp Image 2019-02-12 at 10.15.02 AM.jpeg");
+    background-image: linear-gradient(rgba(0,0,0, 0.80)), url("../src/assets/seccion_users.png");
     background-size: cover;
+  }
+
+  .new_color {
+    background-color: #059193;
+    height: 70px;
   }
 </style>
 
